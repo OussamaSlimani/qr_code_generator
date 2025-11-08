@@ -147,8 +147,7 @@ def create_badge(person, config, fonts, output_folder):
     )
     
     # Save badge
-    safe_name = sanitize_filename(full_name)
-    filename = f"{output_folder}/{participant_id}_{safe_name}.png"
+    filename = f"{output_folder}/{participant_id}.png"
     
     try:
         badge.save(filename, "PNG", dpi=(300, 300))
