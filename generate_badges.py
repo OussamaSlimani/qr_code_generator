@@ -63,7 +63,7 @@ def draw_centered(draw, text, y, size, color=(255,255,255), bold=True):
 
 # --- Main ---
 try:
-    people = json.load(open("participants.json", encoding="utf-8"))
+    people = json.load(open("participants-test.json", encoding="utf-8"))
 except Exception as e:
     print("Error:", e)
     exit()
