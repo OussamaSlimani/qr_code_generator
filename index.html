@@ -130,7 +130,7 @@
 <body>
     <div class="gallery-container">
         <div class="search-box">
-            <input type="text" id="searchInput" class="form-control" placeholder="🔍 Search by name, ID, or student branch...">
+            <input type="text" id="searchInput" class="form-control" placeholder="Search by name, ID, or student branch...">
         </div>
         
         <div class="stats" id="stats"></div>
@@ -195,11 +195,6 @@
                                  loading="lazy"
                                  onerror="this.parentElement.parentElement.parentElement.style.display='none'">
                         </a>
-                        <div class="badge-info">
-                            <h5>${name}</h5>
-                            <p>📍 ${branch}</p>
-                            <span class="badge-id">ID: ${id}</span>
-                        </div>
                     </div>
                 `;
                 
