@@ -25,6 +25,32 @@
             padding: 0 15px;
         }
         
+        .search-box {
+            max-width: 500px;
+            margin: 0 auto 30px;
+        }
+        
+        .search-box input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            padding: 12px 25px;
+            font-size: 16px;
+            color: #fff;
+        }
+        
+        .search-box input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        
+        .search-box input:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(170, 210, 255, 0.5);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(170, 210, 255, 0.1);
+            color: #fff;
+        }
+        
         .gallery-item-wrapper {
             margin-bottom: 25px;
         }
@@ -50,6 +76,42 @@
             display: block;
         }
         
+        .badge-info {
+            padding: 15px;
+            background: rgba(10, 14, 26, 0.9);
+            color: #fff;
+        }
+        
+        .badge-info h5 {
+            margin: 0 0 8px 0;
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+        }
+        
+        .badge-info p {
+            margin: 0;
+            font-size: 14px;
+            color: #aad4ff;
+        }
+        
+        .badge-info .badge-id {
+            display: inline-block;
+            background: rgba(170, 210, 255, 0.15);
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-top: 5px;
+            color: #aad4ff;
+        }
+        
+        .stats {
+            text-align: center;
+            color: #aad4ff;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
         .loading {
             text-align: center;
             color: #fff;
@@ -67,6 +129,12 @@
 </head>
 <body>
     <div class="gallery-container">
+        <div class="search-box">
+            <input type="text" id="searchInput" class="form-control" placeholder="🔍 Search by name, ID, or student branch...">
+        </div>
+        
+        <div class="stats" id="stats"></div>
+        
         <div class="row" id="gallery">
             <div class="loading">Loading badges...</div>
         </div>
@@ -102,7 +170,7 @@
             galleryContainer.innerHTML = '';
             
             if (data.length === 0) {
-                galleryContainer.innerHTML = '<div class="no-results">No badges found.</div>';
+                galleryContainer.innerHTML = '<div class="no-results">No badges found matching your search.</div>';
                 return;
             }
             
@@ -127,11 +195,20 @@
                                  loading="lazy"
                                  onerror="this.parentElement.parentElement.parentElement.style.display='none'">
                         </a>
+                        <div class="badge-info">
+                            <h5>${name}</h5>
+                            <p>📍 ${branch}</p>
+                            <span class="badge-id">ID: ${id}</span>
+                        </div>
                     </div>
                 `;
                 
                 galleryContainer.appendChild(col);
             });
+            
+            // Update stats
+            document.getElementById('stats').textContent = 
+                `Showing ${data.length} of ${participants.length} badges`;
             
             // Destroy old lightbox if exists
             if (lightbox) {
@@ -151,6 +228,24 @@
                 }
             });
         }
+        
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase().trim();
+            
+            if (searchTerm === '') {
+                renderGallery(participants);
+                return;
+            }
+            
+            const filtered = participants.filter(p => {
+                return p.name.toLowerCase().includes(searchTerm) ||
+                       p.id.includes(searchTerm) ||
+                       p.studentBranch.toLowerCase().includes(searchTerm);
+            });
+            
+            renderGallery(filtered);
+        });
         
         // Load on page load
         loadParticipants();
