@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Badge Gallery</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- GLightbox CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css">
+    
+    <style>
+        body {
+            background: #0a0e1a;
+            min-height: 100vh;
+            padding: 20px 0;
+            margin: 0;
+        }
+        
+        .gallery-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        .gallery-item-wrapper {
+            margin-bottom: 25px;
+        }
+        
+        .gallery-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .gallery-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.7);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #fff;
+            padding: 50px;
+            font-size: 18px;
+        }
+        
+        .no-results {
+            text-align: center;
+            color: #aad4ff;
+            padding: 50px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="gallery-container">
+        <div class="row" id="gallery">
+            <div class="loading">Loading badges...</div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- GLightbox JS -->
+    <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
+    
+    <script>
+        let participants = [];
+        let lightbox = null;
+        
+        // Load participants data
+        async function loadParticipants() {
+            try {
+                const response = await fetch('participants-test.json');
+                participants = await response.json();
+                console.log(`Loaded ${participants.length} participants`);
+                renderGallery(participants);
+            } catch (error) {
+                console.error('Error loading participants:', error);
+                document.getElementById('gallery').innerHTML = 
+                    '<div class="no-results">Error loading participants data. Make sure participants-test.json exists.</div>';
+            }
+        }
+        
+        // Render gallery
+        function renderGallery(data) {
+            const galleryContainer = document.getElementById('gallery');
+            galleryContainer.innerHTML = '';
+            
+            if (data.length === 0) {
+                galleryContainer.innerHTML = '<div class="no-results">No badges found.</div>';
+                return;
+            }
+            
+            data.forEach((participant) => {
+                const id = participant.id;
+                const name = participant.name;
+                const branch = participant.studentBranch;
+                const imagePath = `./badges-test/${id}.jpg`;
+                
+                const col = document.createElement('div');
+                col.className = 'col-xl-3 col-lg-4 col-md-6 col-sm-12 gallery-item-wrapper';
+                
+                col.innerHTML = `
+                    <div class="gallery-item">
+                        <a href="${imagePath}" 
+                           class="glightbox" 
+                           data-gallery="badges"
+                           data-title="${name}"
+                           data-description="ID: ${id} | Branch: ${branch}">
+                            <img src="${imagePath}" 
+                                 alt="${name}" 
+                                 loading="lazy"
+                                 onerror="this.parentElement.parentElement.parentElement.style.display='none'">
+                        </a>
+                    </div>
+                `;
+                
+                galleryContainer.appendChild(col);
+            });
+            
+            // Destroy old lightbox if exists
+            if (lightbox) {
+                lightbox.destroy();
+            }
+            
+            // Initialize GLightbox
+            lightbox = GLightbox({
+                touchNavigation: true,
+                loop: true,
+                autoplayVideos: false,
+                closeButton: true,
+                selector: '.glightbox',
+                skin: 'clean',
+                cssEfects: {
+                    fade: { in: 'fadeIn', out: 'fadeOut' }
+                }
+            });
+        }
+        
+        // Load on page load
+        loadParticipants();
+    </script>
+</body>
+</html>
