@@ -84,7 +84,7 @@ except Exception as e:
     print("Error:", e)
     exit()
 
-Path("badges-test").mkdir(exist_ok=True)
+Path("badges-enis").mkdir(exist_ok=True)
 print(f"Generating {len(people)} clean badges...\n")
 
 for p in people:
@@ -137,7 +137,7 @@ for p in people:
     # -----------------------------
     # SAVE
     # -----------------------------
-    file = f"badges-test/{pid}.jpg"
+    file = f"badges-enis/{pid}.jpg"
     bg.convert("RGB").save(file, "JPEG", quality=90, dpi=DPI)
 
     size_kb = os.path.getsize(file) // 1024
